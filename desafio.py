@@ -1,17 +1,13 @@
-import dio_banco_v1 as Dio
+import dio_banco_v2 as Dio
 from time import sleep
 
 #----SETTING VARIABLES----
 
-version = "v1"
+version = "v2"
+flag_prerun_check = False
 
-current_version_functions = ['Menu', 'OrderedDict', 'User', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'asctime', 'entrada_campo_listuple', 'entry_field', 'localtime']
-
-
-
-entrada_campo = {'d': 'Depositar', 's': 'Sacar', 'e': 'Extrato', 'q': 'Sair'}
-
-menu = f"""
+entrada_campo_backup = {'d': 'Depositar', 's': 'Sacar', 'e': 'Extrato', 'q': 'Sair'}
+menu_backup = f"""
 
 [d] Depositar
 [s] Sacar
@@ -20,28 +16,33 @@ menu = f"""
 
 => """
 
-menu = Dio.Menu.make_menu()
+
+
 entrada_campo = dict(Dio.entry_field)
 Usuario = Dio.User(username="Teste da Silva")
+menu = Dio.Menu.make_menu()
+if not menu:
+    menu = menu_backup
+
 
 
 #----PRERUN CHECKS----
 
 
 
-if list(dir(Dio)) != current_version_functions:
-    print("Seu sistema está desatualizado. \nAbortando operação")
-    quit()
-
 conjunto_funcoes_externas = set(
             [elem for elem in dir(Dio.User) if not elem.startswith("__")]
             )
 
-if conjunto_funcoes_externas == {'sair', 'saque', 'deposito', 'extrato'}:
-    flag_funcoes_esperadas = True
-else:
-    print("Funcionalidade estranha detectada. Por favor, verifique.")
-    quit()
+if flag_prerun_check and conjunto_funcoes_externas != {
+        'extrato', 'deposito', 'precheck_operations_limit', 'sair', 'saque', 'make_timestamp'
+        }:
+
+    temp = input(f"AVISO!\n\nFuncionalidade nova detectada. Por favor, verifique:...\n{
+          conjunto_funcoes_externas
+          }\n\nContinuar programa? [Enter para continuar / qualquer texto para abortar]\n=> ")
+    if not len(temp) < 1:
+        quit()
 
 
 
@@ -49,16 +50,9 @@ else:
 #----INITIALIZING FUNCTIONS----
 
 
-
-def debug_by_print():
-    print("----DEBUG")
-    print(entrada_campo)
-    print(menu)
-
-
 def interface():
     sleep(0.4)
-    print("----INTERFACE")
+    print("----INTERFACE----")
 
     while True:
         print("Pressione uma das opções (ou Enter para sair).")
@@ -66,10 +60,11 @@ def interface():
         entrada = input(menu)
         
     
-        #--Enter para sair
+        #--Enter to quit
         if len(entrada) < 1:
             #break
-            quit()
+            Usuario.sair()
+            quit()  ##--HEADS UP! Please keep this here in case the other function changes. Notice 'break' is commented out.
             
         saida = str(entrada).lower()
 
@@ -109,21 +104,22 @@ def get_function(opcao=None):   #see note 04
                 print("Funcionalidade não implementada. Favor reportar.")
 
     except Exception as err:
-        print(err, "\n") 
+        print("----AVISO!----\nErro:", err, "\n") 
 
 
             
 def formatar_extrato():
     formatado = ""
     
+    #--Handling missing filehandle
     if Usuario.extrato() is None:
         return None
 
     for registro in Usuario.extrato():
-        formatado += f"R$ {registro[0]:.2f}"
-        formatado += "\n"
+        # timestamp, tab, value
+        formatado += f"{registro[0]}\tR$ {registro[1]:.2f}\n"
     
-    formatado += f"R$ {Usuario.saldo:.2f}"
+    formatado += f"Saldo: \tR$ {Usuario.saldo:.2f}"
     return formatado
 
 
@@ -132,8 +128,6 @@ def formatar_extrato():
 #----RUNNING----
 
 
-
-#debug_by_print()
 
 
 while True:     #quit() instead of break
