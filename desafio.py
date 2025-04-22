@@ -1,5 +1,8 @@
 import dio_banco_v2 as Dio
+import dio_conta_v1 as Conta
 from time import sleep
+
+
 
 #----SETTING VARIABLES----
 
@@ -14,7 +17,7 @@ menu_backup = f"""
 [e] Extrato
 [q] Sair
 
-=> """
+ """
 
 
 
@@ -40,7 +43,7 @@ if flag_prerun_check and conjunto_funcoes_externas != {
 
     temp = input(f"AVISO!\n\nFuncionalidade nova detectada. Por favor, verifique:...\n{
           conjunto_funcoes_externas
-          }\n\nContinuar programa? [Enter para continuar / qualquer texto para abortar]\n=> ")
+          }\n\nContinuar programa? [Enter para continuar / qualquer texto para abortar]\n>>> ")
     if not len(temp) < 1:
         quit()
 
@@ -127,7 +130,9 @@ def formatar_extrato():
 
 #----RUNNING----
 
-
+# Run 'Account' once
+conta = Conta.Account()
+conta.write_conta_info()
 
 
 while True:     #quit() instead of break
