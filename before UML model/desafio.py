@@ -22,7 +22,7 @@ menu_backup = f"""
 
 
 entrada_campo = dict(Dio.entry_field)
-Usuario = Dio.User(username="Teste da Silva")
+Usuario = Dio.Operations(username="Teste da Silva")
 menu = Dio.Menu.make_menu()
 if not menu:
     menu = menu_backup
@@ -34,7 +34,7 @@ if not menu:
 
 
 conjunto_funcoes_externas = set(
-            [elem for elem in dir(Dio.User) if not elem.startswith("__")]
+            [elem for elem in dir(Dio.Operations) if not elem.startswith("__")]
             )
 
 if flag_prerun_check and conjunto_funcoes_externas != {
@@ -52,10 +52,14 @@ if flag_prerun_check and conjunto_funcoes_externas != {
 
 #----INITIALIZING FUNCTIONS----
 
+def sysout_conta_info(target) -> str:
+    return target.__repr__()
 
 def interface():
     sleep(0.4)
     print("----INTERFACE----")
+    print(sysout_conta_info(conta))
+
 
     while True:
         print("Pressione uma das opções (ou Enter para sair).")
@@ -65,9 +69,9 @@ def interface():
     
         #--Enter to quit
         if len(entrada) < 1:
-            #break
             Usuario.sair()
             quit()  ##--HEADS UP! Please keep this here in case the other function changes. Notice 'break' is commented out.
+            #break
             
         saida = str(entrada).lower()
 

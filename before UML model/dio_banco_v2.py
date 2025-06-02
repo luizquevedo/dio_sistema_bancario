@@ -59,7 +59,7 @@ class Menu:
 
 
 
-class User:
+class Operations:
 
     def __init__(self, username):
         self.username = username
