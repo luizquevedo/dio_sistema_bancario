@@ -52,14 +52,14 @@ class Menu:
 
         menu = ("\n"
                 .join(f"[{elem[0]}]: {elem[1]}" for elem in ECL) 
-                + ("\n\n=> ")
+                + ("\n\n>>> ")
                 ) #see note 02
         return menu
 
 
 
 
-class User:
+class Operations:
 
     def __init__(self, username):
         self.username = username
@@ -96,7 +96,7 @@ class User:
 
 
 
-        v_deposito = input("Deseja depositar quanto?\n\n=> ")
+        v_deposito = input("Deseja depositar quanto?\n\n>>> ")
         try:
             v_operacao = float(v_deposito)
         except:
@@ -129,11 +129,14 @@ class User:
 
         def update_saques():
             #--Iterando self.numero_de_saques com base nos valores numéricos de self.historico
+
             if len(self.historico) < self.numero_de_saques:
-                ##--Heads up! Possivel erro Off-By-One. Verificar. Alternativamente, menor que 1.
+                ##--Heads up! Possivel erro Off-By-One. Verificar.
+                ##--Alternativamente, menor que 1.
                 return None
+            
             for registro in self.historico:
-                if registro[0] < 0:  #valor negativo
+                if registro[0] < 0:  # valor negativo da operacao
                     self.numero_de_saques -= 1
                 if self.numero_de_saques < 1: 
                     raise Exception("Máximo de operações de saque por dia atingido.") 
@@ -142,7 +145,7 @@ class User:
 
 
 
-        v_saque = input("Deseja sacar quanto?\n\n=> ")
+        v_saque = input("Deseja sacar quanto?\n\n>>> ")
         try:
             v_operacao = float(v_saque)
             v_operacao *= -1
