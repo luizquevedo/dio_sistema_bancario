@@ -94,6 +94,7 @@ class PessoaFisica():
         # success msg
         print('\n\nSucesso!\n' + self.__str__())
 
+
     def __str__(self):
         return "(Pessoa Fisica)\n" + "\n".join([f"> {k.upper()}: {v}" for k,v in self.__dict__.items()]) + "\n"   
 
@@ -197,3 +198,4 @@ while resp := input('Abrir uma conta? [y/n]\n(aperte n e Enter para cancelar)\n>
     print('NotImplemented')
 
 print('O Banco agradece sua visita. Até a próxima!')
+
