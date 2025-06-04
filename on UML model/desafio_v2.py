@@ -92,7 +92,8 @@ class PessoaFisica():
         self.nome = nome
         self.data_nascimento = data_nascimento
         # success msg
-        print('Sucesso!', self.__str__())
+        print('\n\nSucesso!\n' + self.__str__())
+
 
     def __str__(self):
         return "(Pessoa Fisica)\n" + "\n".join([f"> {k.upper()}: {v}" for k,v in self.__dict__.items()]) + "\n"   
@@ -149,19 +150,52 @@ class ContaCorrente():
 
 
 #---Rodando---
+##--Exploração inicial
+## Primeiro uma pessoa entra no banco e solicita... ser cliente. Daí, sendo cliente, pode solicitar abrir uma conta.
 
-## Primeiro uma pessoa entra no banco e solicita... ser cliente.
-## Dai sendo cliente, pode solicitar abrir uma conta.
 
-
-# setting a person
+# instanciando uma pessoa
 luiz = PessoaFisica(12345678901, 'luizinho delas', 20010101)
 
 
-# making a person into a client
+# 'clientizando' uma pessoa 
 cliente = Cliente(luiz, 'Rua dos Bobos, 0')
 
 
-# opening an account when there is none under their name
-cuenta = Conta(cliente, 0, 0, 0) 
+# abrindo a primeira conta do cliente
+conta = Conta(cliente, 0, 0, 0) 
+
+
+##--Simulação de autoatendimento--
+## Abertura de conta: 1.dados da pessoa fisica; 2.clientizar; 3.abrir a primeira conta; 4. mostrar
+
+# loopando interface com usuario 
+while resp := input('Abrir uma conta? [y/n]\n(aperte n e Enter para cancelar)\n>>> ').lower() != 'n':
+    # 1.
+    print('Certo, vamos cadastrar uma pessoa física.\nPreciso das seguintes informações:')
+
+    # PREMISSA: é *inseguro* o acesso público para acessar PessoaFisica.__dict__.keys()... proibido!
+    '''
+    if len(PessoaFisica.__dict__.keys()) != 3:
+        raise NotImplementedError('Erro. Robô responsável pelas pessoas físicas: em manutenção. Por favor, falar com um atendente.')'''
+    
+    # 'campos' é um iterável cujas chaves são, sem tirar nem por, os argumentos da função que instancia, nem mais nem menos.
+    campos = dict.fromkeys(
+            ('CPF', 'Nome completo', 'Data de nascimento'), 
+            None
+            )
+    # 'campos' recebe strings do usuário.
+    for k in campos.keys():
+        campos[k] = input(f'{k}:\n>>> ')
+    # 'campos' é expandido no ato de instanciar.
+    try:
+        pessoa = PessoaFisica(*campos.values())
+    except:
+        raise NotImplementedError('Erro. Robô não conseguiu criar uma instância de pessoa física.')
+    
+
+    # 2.
+    print('NotImplemented')
+
+print('O Banco agradece sua visita. Até a próxima!')
 
