@@ -4,6 +4,7 @@
 
 
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 class Transacao(ABC): 
     @abstractmethod
@@ -28,10 +29,18 @@ class Deposito(Transacao):
         pass
 
     def registrar(self):
-        # pegar o ponteiro self.historico:Historico. 
+        # pegar o ponteiro self.historico:Historico.
+        #self.historico:object
         # extrair as transações ou a estrutura de dados
+        #Feito via chamado de self.historico.transacoes
         # append ou update
+        #Feito via Historico.adicionar_transacao
         # fazer o set da estrutura de dados no objeto historico
+        Historico.adicionar_transacao(
+                self,
+                self.__class__.__name__,
+                'valor',
+                )
         pass
 
 
@@ -59,22 +68,28 @@ class Historico():
     def __init__(self): 
         # Talvez no futuro conecte uma DB?
         # Ou só leia de um arquivo?
+        
+        self._transacoes = {}
         pass
 
+    @property
+    def transacoes(self):
+        return self._transacoes
+
     def adicionar_transacao(self, operacao, valor):
-        datetime = datetime.now.strftime("%Y-%m-%d %H:%M:%S") 
-        transacao = {datetime: {
+        dataihora = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+        transacao = {dataihora: {
             'tipo': operacao, 
             'valor': valor,
             }}  # dict with dicts
         # E se duas operacoes ocorrerem ao mesmo tempo??? see note 004
-        #self.historico.update(transacao)
+        self.transacoes.update(transacao)
 
     def __str__(self):
-        if len(self.historico) < 1:
+        if len(self.transacoes) < 1:
             return '(nenhum historico)'
         else:
-            return "->\n".join([f'{k}: v' for k,v in self.historico.items()])
+            return "->\n".join([f'{k}: v' for k,v in self.transacoes.items()])
 
 
 
@@ -188,18 +203,18 @@ class ContaCorrente(Conta):
 
     
 def conta_demo():    
+    global luiz, cliente, conta
+
     # instanciando uma pessoa
     luiz = PessoaFisica(12345678901, 'luizinho delas', 20010101)
-    
     
     # 'clientizando' uma pessoa 
     cliente = Cliente(luiz, 'Rua dos Bobos, 0')
     
-    
     # abrindo a primeira conta do cliente
     conta = Conta(cliente, 0, 0, 0) 
     
-    print('Conta demo instanciada.')
+    print("Conta demo instanciada.\n(explore 'luiz', 'cliente' e 'conta' na CLI\n")
 
 
 
