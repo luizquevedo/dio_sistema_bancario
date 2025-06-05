@@ -1,4 +1,4 @@
-# ---desafio_v2.py---
+# ---desafio_v2_feature_historico.py---
 # see note 01
 
 
@@ -10,10 +10,15 @@ class Transacao(ABC):
     def registrar(self):
         pass
 
-# TODO: branch 1 -> conta -> deposito -> saque
-# TODO: branch 2 -> conta -> historico (registrar qqr coisa ae mano)
-
-
+#---!!! A T E N C A O !!!---
+# Voce esta na branch feature_historico
+#
+# todo: branch 1 (né aqui não!!!)
+# TODO: branch 2 -> conta -> historico (registrar qqr coisa ae mano, não precisa ser operações não.)
+#
+# OBJETIVO: registrar qualquer coisa via Historico()
+# PROBLEMA de programação: impl. funcionalidades Create, Read, Update
+#
 #------
 
 class Deposito(Transacao):
