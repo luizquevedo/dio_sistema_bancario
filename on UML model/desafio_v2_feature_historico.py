@@ -5,6 +5,8 @@
 
 from abc import ABC, abstractmethod
 from datetime import datetime
+from json import loads, dumps  # alt: load, dump
+
 
 class Transacao(ABC): 
     @abstractmethod
@@ -18,8 +20,9 @@ class Transacao(ABC):
 # TODO: branch 2 -> conta -> historico (registrar qqr coisa ae mano, não precisa ser operações não.)
 #
 # OBJETIVO: registrar qualquer coisa via Historico()
-# PROBLEMA de programação: impl. funcionalidades Create, Read, Update
-#
+# Feito
+# PROBLEMA de programação: impl. funcionalid. Create, Read, Update
+# Funcionalidades CRU feitas via Historico.adicionar_transacao()
 #------
 
 class Deposito(Transacao):
@@ -65,25 +68,46 @@ class Saque():
 class Historico():
     # Toda conta tem o seu historico. 'self.historico = Historico()
 
-    def __init__(self): 
+    def __init__(self, numero_da_conta:str): 
         # Talvez no futuro conecte uma DB?
-        # Ou só leia de um arquivo?
-        
-        self._transacoes = {}
-        pass
+        # see note 005
+
+        self.filename = 'historico'+str(numero_da_conta)+'.json'
+        try:
+            # try opening 'historico000000001-9.txt'
+            with open(self.filename, 'r') as filehandle:
+                self._transacoes = loads(filehandle.read())
+        except FileNotFoundError: 
+            self._transacoes = {}
+
 
     @property
     def transacoes(self):
         return self._transacoes
 
-    def adicionar_transacao(self, operacao, valor):
+    def adicionar_transacao(self, operacao:str, valor):
+        #---Adicionar transacao---
+
         dataihora = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
         transacao = {dataihora: {
             'tipo': operacao, 
             'valor': valor,
             }}  # dict with dicts
+        
+        # fazer Update de self.transacoes:dict
         # E se duas operacoes ocorrerem ao mesmo tempo??? see note 004
         self.transacoes.update(transacao)
+
+        # escrever no arquivo. abrir em modo write/append nunca grita erro pois abre um arquivo se não tiver.
+        with open(self.filename, 'w') as filehandle:
+            filehandle.write(dumps(self.transacoes).strip('\n'))
+            # uma linha alternativa com "open(self.filename, 'a'(...)dumps(transacao)" faz raise do erro 'json.decoder.JSONDecodeError: Extra data'
+            # esta linha com modo write, ela tem O(triangular) uma vez que reescreve tudo de novo, mas deve evitar erros por enquanto!
+
+
+        
+        #------
+
 
     def __str__(self):
         if len(self.transacoes) < 1:
@@ -150,7 +174,7 @@ class Conta():
         self.numero = numero 
         self.agencia = agencia
         self.cliente = cliente
-        self.historico = Historico()
+        self.historico = Historico(self.numero)
 
         #--por padrao, começa tipo 'conta', podendo virar corrente--
         pass
