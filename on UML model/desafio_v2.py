@@ -13,6 +13,7 @@ class Transacao(ABC):
     def registrar(self):
         pass
 
+<<<<<<< HEAD
 #---!!! A T E N C A O !!!---
 # Voce esta na branch feature_historico
 #
@@ -27,9 +28,15 @@ class Transacao(ABC):
 
 class Deposito(Transacao):
     # PREMISSA: Valores de depósito são sempre positivos.
-    def __init__(self, valor):
-        self.valor = valor
-        pass
+=======
+    
+    def depositar(self, valor:float) -> bool:
+        # TODO: sanitize your inputs!        
+        if valor < 0:
+            print('\n\nErro ao depositar.\n\nFavor verificar.\n\n')
+            return False
+        self.saldo += valor
+        return True
 
     def registrar(self):
         # pegar o ponteiro self.historico:Historico.
@@ -44,20 +51,21 @@ class Deposito(Transacao):
                 self.__class__.__name__,
                 'valor',
                 )
+>>>>>>> develop
         pass
 
 
 class Saque():
     # PREMISSA: Valores de saque são sempre *POSITIVOS*!
-    def __init__(self, valor):
-        self.valor = valor
 
-    def sacar(self, saldo, valor):
-        if valor > saldo:
-            return 'Saque não permitido'
+    def sacar(self, valor):
+        print('\nAtenção: se você está vendo isso, você não tem uma conta corrente.\nFavor verficar.\n\n')
+        if valor > self.saldo:
+            print('Saque não permitido')
+            return False
         else:
             self.saldo -= valor
-            return valor
+            return True
 
     def registrar(self):
         # vide Deposito.registrar()
@@ -163,7 +171,9 @@ class PessoaFisica():
 
 
 
-class Conta():
+class Conta(Deposito, Saque):
+    # Por que não simplesmente herdar as operações?
+
     def __init__(self, 
                  cliente:object=None,
                  saldo:float=0, 
