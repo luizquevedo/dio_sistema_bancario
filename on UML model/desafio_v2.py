@@ -1,20 +1,28 @@
-# ---desafio_v2.py---
+# ---desafio_v2_feature_historico.py---
 # see note 01
 
 
 
 from abc import ABC, abstractmethod
+from datetime import datetime
+from json import loads, dumps  # alt: load, dump
+
 
 class Transacao(ABC): 
     @abstractmethod
     def registrar(self):
         pass
 
-# TODO: Tudo precisa de uma conta para existir. Faz uma aí, mano.
-# TODO: branch 1 -> conta -> deposito -> saque
-# TODO: branch 2 -> conta -> historico (registrar qqr coisa ae mano)
-
-
+#---!!! A T E N C A O !!!---
+# Voce esta na branch feature_historico
+#
+# todo: branch 1 (né aqui não!!!)
+# TODO: branch 2 -> conta -> historico (registrar qqr coisa ae mano, não precisa ser operações não.)
+#
+# OBJETIVO: registrar qualquer coisa via Historico()
+# Feito
+# PROBLEMA de programação: impl. funcionalid. Create, Read, Update
+# Funcionalidades CRU feitas via Historico.adicionar_transacao()
 #------
 
 class Deposito(Transacao):
@@ -27,13 +35,20 @@ class Deposito(Transacao):
             return False
         self.saldo += valor
         return True
-        
 
     def registrar(self):
-        # pegar o ponteiro self.historico:Historico. 
+        # pegar o ponteiro self.historico:Historico.
+        #self.historico:object
         # extrair as transações ou a estrutura de dados
+        #Feito via chamado de self.historico.transacoes
         # append ou update
+        #Feito via Historico.adicionar_transacao
         # fazer o set da estrutura de dados no objeto historico
+        Historico.adicionar_transacao(
+                self,
+                self.__class__.__name__,
+                'valor',
+                )
         pass
 
 
@@ -58,19 +73,46 @@ class Saque():
 class Historico():
     # Toda conta tem o seu historico. 'self.historico = Historico()
 
-    def __init__(self): 
+    def __init__(self, numero_da_conta:str): 
         # Talvez no futuro conecte uma DB?
-        self.transacoes = {}
-        pass
+        # see note 005
 
-    def adicionar_transacao(self, operacao, valor):
-        datetime = datetime.now.strftime("%Y-%m-%d %H:%M:%S") 
-        transacao = {datetime: {
+        self.filename = 'historico'+str(numero_da_conta)+'.json'
+        try:
+            # try opening 'historico000000001-9.txt'
+            with open(self.filename, 'r') as filehandle:
+                self._transacoes = loads(filehandle.read())
+        except FileNotFoundError: 
+            self._transacoes = {}
+
+
+    @property
+    def transacoes(self):
+        return self._transacoes
+
+    def adicionar_transacao(self, operacao:str, valor):
+        #---Adicionar transacao---
+
+        dataihora = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+        transacao = {dataihora: {
             'tipo': operacao, 
             'valor': valor,
             }}  # dict with dicts
+        
+        # fazer Update de self.transacoes:dict
         # E se duas operacoes ocorrerem ao mesmo tempo??? see note 004
-        #self.historico.update(transacao)
+        self.transacoes.update(transacao)
+
+        # escrever no arquivo. abrir em modo write/append nunca grita erro pois abre um arquivo se não tiver.
+        with open(self.filename, 'w') as filehandle:
+            filehandle.write(dumps(self.transacoes).strip('\n'))
+            # uma linha alternativa com "open(self.filename, 'a'(...)dumps(transacao)" faz raise do erro 'json.decoder.JSONDecodeError: Extra data'
+            # esta linha com modo write, ela tem O(triangular) uma vez que reescreve tudo de novo, mas deve evitar erros por enquanto!
+
+
+        
+        #------
+
 
     def __str__(self):
         if len(self.transacoes) < 1:
@@ -139,7 +181,7 @@ class Conta(Deposito, Saque):
         self.numero = numero 
         self.agencia = agencia
         self.cliente = cliente
-        self.historico = Historico()
+        self.historico = Historico(self.numero)
 
         #--por padrao, começa tipo 'conta', podendo virar corrente--
         pass
@@ -162,8 +204,14 @@ class Conta(Deposito, Saque):
         # Quem adiciona em cliente.contas na verdade é Cliente.adicionar_conta()
         pass
 
-    #def sacar(self, valor):
-        #pass
+    def sacar(self, valor:float) -> bool:
+        pass
+
+    def depositar(self, valor:float) -> bool:
+        # checar se valor < 0
+        # caso negativo chamar Deposito.depositar()
+        # see note 003. Quem vai subir pro historico na verdade é Deposito.registrar() com base no ponteiro self.historico:Historico. Repare! self.historico não é uma estrutura de dados, é um ponteiro pra um objeto que a contém.
+        pass
     
     def __str__(self):
         return "\n".join([f"{k.title()}: {v}" for k,v in self.__dict__.items()])
@@ -197,7 +245,7 @@ def conta_demo():
     # abrindo a primeira conta do cliente
     conta = Conta(cliente, 0, 0, 0) 
     
-    print('Conta demo instanciada.')
+    print("Conta demo instanciada.\n(explore 'luiz', 'cliente' e 'conta' na CLI\n")
 
 
 

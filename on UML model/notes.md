@@ -9,3 +9,9 @@ Repare! self.historico não é uma estrutura de dados, é um ponteiro pra um obj
 
 ### note 004
 Duas operações vão acontecer no mesmo segundo??? E se? Meu filho, este programa roda na CLI. Se acontecer eu vou estar DJ Khalid: Suffering From Success. Caso no qual a gente vem e melhora a implementação. Em todo caso, *otimização prematura é a raiz de todo mal.*
+
+### note 005
+Como criar arquivos de histórico?
+
+Por ora, vai se fazer um struct de nome de arquivo, para padronizar.
+'historico'+self.conta
