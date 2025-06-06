@@ -13,4 +13,5 @@ Duas operações vão acontecer no mesmo segundo??? E se? Meu filho, este progra
 ### note 005
 Como criar arquivos de histórico?
 
-Por ora, vai se fazer um struct de nome de arquivo, para padronizar. ''historico'+self.conta
+Por ora, vai se fazer um struct de nome de arquivo, para padronizar.
+'historico'+self.conta

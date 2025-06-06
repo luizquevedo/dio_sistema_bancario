@@ -13,7 +13,6 @@ class Transacao(ABC):
     def registrar(self):
         pass
 
-<<<<<<< HEAD
 #---!!! A T E N C A O !!!---
 # Voce esta na branch feature_historico
 #
@@ -28,7 +27,6 @@ class Transacao(ABC):
 
 class Deposito(Transacao):
     # PREMISSA: Valores de depósito são sempre positivos.
-=======
     
     def depositar(self, valor:float) -> bool:
         # TODO: sanitize your inputs!        
@@ -51,7 +49,6 @@ class Deposito(Transacao):
                 self.__class__.__name__,
                 'valor',
                 )
->>>>>>> develop
         pass
 
 
