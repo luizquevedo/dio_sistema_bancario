@@ -10,6 +10,7 @@ class Transacao(ABC):
     def registrar(self):
         pass
 
+# TODO: Tudo precisa de uma conta para existir. Faz uma aí, mano.
 # TODO: branch 1 -> conta -> deposito -> saque
 # TODO: branch 2 -> conta -> historico (registrar qqr coisa ae mano)
 
@@ -18,9 +19,15 @@ class Transacao(ABC):
 
 class Deposito(Transacao):
     # PREMISSA: Valores de depósito são sempre positivos.
-    def __init__(self, valor):
-        self.valor = valor
-        pass
+    
+    def depositar(self, valor:float) -> bool:
+        # TODO: sanitize your inputs!        
+        if valor < 0:
+            print('\n\nErro ao depositar.\n\nFavor verificar.\n\n')
+            return False
+        self.saldo += valor
+        return True
+        
 
     def registrar(self):
         # pegar o ponteiro self.historico:Historico. 
@@ -32,15 +39,15 @@ class Deposito(Transacao):
 
 class Saque():
     # PREMISSA: Valores de saque são sempre *POSITIVOS*!
-    def __init__(self, valor):
-        self.valor = valor
 
-    def sacar(self, saldo, valor):
-        if valor > saldo:
-            return 'Saque não permitido'
+    def sacar(self, valor):
+        print('\nAtenção: se você está vendo isso, você não tem uma conta corrente.\nFavor verficar.\n\n')
+        if valor > self.saldo:
+            print('Saque não permitido')
+            return False
         else:
             self.saldo -= valor
-            return valor
+            return True
 
     def registrar(self):
         # vide Deposito.registrar()
@@ -53,7 +60,7 @@ class Historico():
 
     def __init__(self): 
         # Talvez no futuro conecte uma DB?
-        # Ou só leia de um arquivo?
+        self.transacoes = {}
         pass
 
     def adicionar_transacao(self, operacao, valor):
@@ -66,10 +73,10 @@ class Historico():
         #self.historico.update(transacao)
 
     def __str__(self):
-        if len(self.historico) < 1:
+        if len(self.transacoes) < 1:
             return '(nenhum historico)'
         else:
-            return "->\n".join([f'{k}: v' for k,v in self.historico.items()])
+            return "->\n".join([f'{k}: v' for k,v in self.transacoes.items()])
 
 
 
@@ -119,7 +126,9 @@ class PessoaFisica():
 
 
 
-class Conta():
+class Conta(Deposito, Saque):
+    # Por que não simplesmente herdar as operações?
+
     def __init__(self, 
                  cliente:object=None,
                  saldo:float=0, 
@@ -153,14 +162,8 @@ class Conta():
         # Quem adiciona em cliente.contas na verdade é Cliente.adicionar_conta()
         pass
 
-    def sacar(self, valor:float) -> bool:
-        pass
-
-    def depositar(self, valor:float) -> bool:
-        # checar se valor < 0
-        # caso negativo chamar Deposito.depositar()
-        # see note 003. Quem vai subir pro historico na verdade é Deposito.registrar() com base no ponteiro self.historico:Historico. Repare! self.historico não é uma estrutura de dados, é um ponteiro pra um objeto que a contém.
-        pass
+    #def sacar(self, valor):
+        #pass
     
     def __str__(self):
         return "\n".join([f"{k.title()}: {v}" for k,v in self.__dict__.items()])
@@ -183,13 +186,13 @@ class ContaCorrente(Conta):
 
     
 def conta_demo():    
+    global luiz, cliente, conta
+
     # instanciando uma pessoa
     luiz = PessoaFisica(12345678901, 'luizinho delas', 20010101)
     
-    
     # 'clientizando' uma pessoa 
     cliente = Cliente(luiz, 'Rua dos Bobos, 0')
-    
     
     # abrindo a primeira conta do cliente
     conta = Conta(cliente, 0, 0, 0) 
